@@ -1,6 +1,5 @@
 <main class="dashboard">
   <img [src]="imagePath" alt="Danger" width="200px" style="display:flex; margin:auto;" />
-  <!-- <h1 class="title">🔥 ThermoGuard </h1> -->
 
   <div class="sensor-cards-container" style="margin-top: 10px;">
     <ng-container *ngIf="groupedSensors && groupedSensors.length > 0; else noSensors">
@@ -8,6 +7,7 @@
         <h5 class="sensor-title">
           🖥️ อุปกรณ์: <b>{{ sensorGroup.mac_id }}</b>
         </h5>
+
         <!-- Gauge Section -->
         <section class="gauge-section">
           <div class="gauge">
@@ -15,22 +15,26 @@
             <div
               class="gauge-fill"
               [style.transform]="getRotation(sensorGroup.latest.temperature)"
-            [style.background]="getHeatFlag(sensorGroup.latest.heat_index).color"
+              [style.background]="getHeatFlag(sensorGroup.latest.risk_color).color"
             ></div>
+
             <div class="gauge-center">
               <h2>{{ sensorGroup.latest.temperature | number : '1.2-2' }}°C</h2>
-              <p>ความชื้น: {{ sensorGroup.latest.humidity | number : '1.2-2' }}%</p>
-              <p>
-                <b [style.color]="getHeatFlag(sensorGroup.latest.heat_index).color">
+              <div>ความชื้น: {{ sensorGroup.latest.humidity | number : '1.2-2' }}%</div>
+
+              <div>
+                <b [style.color]="getHeatFlag(sensorGroup.latest.risk_color).color">
                   ดัชนี: {{ sensorGroup.latest.heat_index | number : '1.2-2' }}°C
                 </b>
-              </p>
+              </div>
+
               <div class="heat-flag">
-                {{ getHeatFlag(sensorGroup.latest.heat_index).label }}
+                {{ getHeatFlag(sensorGroup.latest.risk_color).label }}
               </div>
             </div>
           </div>
         </section>
+
         <!-- History Section -->
         <section class="history">
           <h3>📜 ประวัติ </h3>
@@ -47,30 +51,33 @@
             </thead>
             <tbody>
               <tr
-  *ngFor="let record of sensorGroup.history"
-  [ngClass]="{
-    'danger-row': getHeatFlag(record.heat_index).label === 'อันตราย' || 
-                  getHeatFlag(record.heat_index).label === 'อันตรายสูง'
-  }"
->
-  <td>{{ record.recorded_at }}</td>
-  <td>{{ record.temperature | number: '1.2-2' }}°C / {{ record.humidity | number: '1.2-2' }}%</td>
-  <td>{{ record.heat_index | number: '1.2-2' }}°C</td>
-</tr>
+                *ngFor="let record of sensorGroup.history"
+                [ngClass]="{
+                  'danger-row': getHeatFlag(record.risk_color).label === 'อันตราย' ||
+                                getHeatFlag(record.risk_color).label === 'อันตรายสูง'
+                }"
+              >
+                <td>{{ record.recorded_at }}</td>
+                <td>
+                  {{ record.temperature | number: '1.2-2' }}°C /
+                  {{ record.humidity | number: '1.2-2' }}%
+                </td>
+                <td>{{ record.heat_index | number: '1.2-2' }}°C</td>
+              </tr>
             </tbody>
           </table>
+
           <ng-template #noData>
-            <p>No history available for this sensor.</p>
+            <div>No history available for this sensor.</div>
           </ng-template>
         </section>
       </section>
     </ng-container>
 
     <ng-template #noSensors>
-      <p class="no-data-message">No sensor data received yet.</p>
+      <div class="no-data-message">No sensor data received yet.</div>
     </ng-template>
   </div>
-  <footer class="footer">
-    <!-- <p>IoT Environment Dashboard © 2025</p> -->
-  </footer>
+
+  <footer class="footer"></footer>
 </main>
