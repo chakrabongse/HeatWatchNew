@@ -59,54 +59,65 @@ export class App implements OnInit, OnDestroy {
   // ======================
   // 🔥 โหลดข้อมูลย้อนหลัง 24 ชั่วโมง
   // ======================
-  loadHistoryAndGroup(): void {
-    this.tempApiService.getHistory().subscribe({
-      next: (res: any[]) => {
-        const groups = new Map<string, SensorGroup>();
-        const now = new Date();
-        const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+loadHistoryAndGroup(): void {
+  this.tempApiService.getHistory().subscribe({
+    next: (res: any[]) => {
+      const groups = new Map<string, SensorGroup>();
+      const now = new Date();
+      const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
-        res.forEach(record => {
-          const temperature = parseFloat(record.temperature);
-          const humidity = parseFloat(record.humidity);
-          const heat_index =
-            record.heat_index !== undefined
-              ? parseFloat(record.heat_index)
-              : this.calculateHeatIndex(temperature, humidity);
+      res.forEach(record => {
+        const temperature = parseFloat(record.temperature);
+        const humidity = parseFloat(record.humidity);
+        const heat_index =
+          record.heat_index !== undefined
+            ? parseFloat(record.heat_index)
+            : this.calculateHeatIndex(temperature, humidity);
 
-          const sensorRecord: SensorData = {
-            temperature,
-            humidity,
-            heat_index,
-            mac_id: record.mac_id,
-            recorded_at: moment.utc(record.recorded_at).format('YYYY-MM-DD HH:mm:ss')
-          };
+        const sensorRecord: SensorData = {
+          temperature,
+          humidity,
+          heat_index,
+          mac_id: record.mac_id,
+          recorded_at: moment
+            .utc(record.recorded_at)
+            .format('YYYY-MM-DD HH:mm:ss')
+        };
 
-          const recordDate = new Date(sensorRecord.recorded_at);
-          if (recordDate >= cutoff) {
-            if (!groups.has(record.mac_id)) {
-              groups.set(record.mac_id, { mac_id: record.mac_id, latest: sensorRecord, history: [] });
-            }
-
-            const group = groups.get(record.mac_id)!;
-            group.history.push(sensorRecord);
-
-            if (recordDate.getTime() > new Date(group.latest.recorded_at).getTime()) {
-              group.latest = sensorRecord;
-            }
+        const recordDate = new Date(sensorRecord.recorded_at);
+        if (recordDate >= cutoff) {
+          if (!groups.has(record.mac_id)) {
+            groups.set(record.mac_id, {
+              mac_id: record.mac_id,
+              latest: sensorRecord,
+              history: []
+            });
           }
-        });
 
-        this.groupedSensors = Array.from(groups.values()).map(g => {
-          g.history.sort(
-            (a, b) => new Date(a.recorded_at).getTime() - new Date(b.recorded_at).getTime()
-          );
-          return g;
-        });
-      },
-      error: err => console.error('Error fetching history:', err)
-    });
-  }
+          const group = groups.get(record.mac_id)!;
+          group.history.push(sensorRecord);
+
+          if (
+            recordDate.getTime() >
+            new Date(group.latest.recorded_at).getTime()
+          ) {
+            group.latest = sensorRecord;
+          }
+        }
+      });
+
+      // ✅ เรียงเวลาใหม่ → เก่า (ล่าสุดอยู่บนสุดของตาราง)
+      this.groupedSensors = Array.from(groups.values()).map(g => {
+        g.history.sort(
+          (a, b) =>
+            new Date(b.recorded_at).getTime() - new Date(a.recorded_at).getTime()
+        );
+        return g;
+      });
+    },
+    error: err => console.error('Error fetching history:', err)
+  });
+}
 
   // ======================
   // 🌤 โหลดข้อมูลรายวัน

@@ -52,7 +52,7 @@ body {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
-
+   
 .sensor-title {
   font-size: 1rem;
   color: #2b2b2b;
@@ -170,4 +170,16 @@ body {
   .title {
     font-size: 2rem;
   }
+}
+/* สีแดงกระพริบสำหรับ danger-row */
+.danger-row {
+  background-color: red;
+  color: white;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { background-color: red; color: white; }
+  50% { background-color: rgb(255, 255, 255); color: yellow; }
+  100% { background-color: red; color: white; }
 }
