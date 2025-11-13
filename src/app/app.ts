@@ -38,6 +38,7 @@ interface DailyDevice {
   styleUrls: ['./app.css']
 })
 export class App implements OnInit, OnDestroy {
+  imagePath = 'assets/logo.png';
   groupedSensors: SensorGroup[] = [];
   dailyData: DailyDevice[] = []; // ✅ ใช้ interface ที่ชัดเจน
   intervalId?: any;
@@ -49,7 +50,7 @@ export class App implements OnInit, OnDestroy {
     // ✅ โหลดข้อมูลใหม่ทุก 5 วิ
     this.intervalId = setInterval(() => {
       this.loadHistoryAndGroup();
-    }, 5000);
+    }, 60000);
   }
 
   ngOnDestroy() {
@@ -148,11 +149,11 @@ loadHistoryAndGroup(): void {
   }
 
   getHeatFlag(heatIndex: number) {
-    if (heatIndex < 27) return { label: 'Safe', color: 'green' };
-    else if (heatIndex < 32) return { label: 'Caution', color: 'goldenrod' };
-    else if (heatIndex < 41) return { label: 'Warning', color: 'orange' };
-    else if (heatIndex < 54) return { label: 'Danger', color: 'red' };
-    else return { label: 'Extreme Danger', color: 'black' };
+    if (heatIndex < 27) return { label: 'ปลอดภัย', color: 'green' };
+    else if (heatIndex < 32) return { label: 'ระวัง', color: 'goldenrod' };
+    else if (heatIndex < 41) return { label: 'เสี่ยง', color: 'orange' };
+    else if (heatIndex < 54) return { label: 'อันตราย', color: 'red' };
+    else return { label: 'อันตรายสูง', color: 'black' };
   }
 
   getHistoryStatusClass(temp: number, hum: number): string {

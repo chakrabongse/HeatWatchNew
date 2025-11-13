@@ -26,7 +26,7 @@ body {
 .title {
   text-align: center;
   font-size: 2.8rem;
-  color: #0a406c;
+  color: #157400;
   margin-bottom: 40px;
   font-weight: 700;
 }
@@ -113,7 +113,7 @@ body {
 
 .gauge-center h2 {
   font-size: 1.4rem;
-  color: #1a759f;
+  color: #000000;
 }
 
 .gauge-center p {
@@ -123,8 +123,8 @@ body {
 
 .heat-flag {
   font-weight: bold;
-  font-size: 0.9rem;
-  color: gray;
+  font-size: 0.7rem;
+  color: rgb(0, 0, 0);
 }
 
 /* ============================= */
